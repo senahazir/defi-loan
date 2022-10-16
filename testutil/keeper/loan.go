@@ -3,8 +3,6 @@ package keeper
 import (
 	"testing"
 
-	"loan/x/loan/keeper"
-	"loan/x/loan/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/store"
@@ -15,6 +13,8 @@ import (
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
+	"loan/x/loan/keeper"
+	"loan/x/loan/types"
 )
 
 func LoanKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
@@ -37,11 +37,11 @@ func LoanKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"LoanParams",
 	)
 	k := keeper.NewKeeper(
-	    cdc,
-	    storeKey,
-	    memStoreKey,
-	    paramsSubspace, 
-        nil,
+		cdc,
+		storeKey,
+		memStoreKey,
+		paramsSubspace,
+		nil,
 	)
 
 	ctx := sdk.NewContext(stateStore, tmproto.Header{}, false, log.NewNopLogger())

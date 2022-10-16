@@ -112,7 +112,7 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 
 		err := app.DistrKeeper.Hooks().AfterValidatorCreated(ctx, val.GetOperator())
 		if err != nil {
-		    panic(err)
+			panic(err)
 		}
 		return false
 	})
@@ -120,12 +120,12 @@ func (app *App) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []str
 	// reinitialize all delegations
 	for _, del := range dels {
 		err := app.DistrKeeper.Hooks().BeforeDelegationCreated(ctx, del.GetDelegatorAddr(), del.GetValidatorAddr())
-	    if err != nil {
-		    panic(err)
+		if err != nil {
+			panic(err)
 		}
 		err = app.DistrKeeper.Hooks().AfterDelegationModified(ctx, del.GetDelegatorAddr(), del.GetValidatorAddr())
 		if err != nil {
-		    panic(err)
+			panic(err)
 		}
 	}
 

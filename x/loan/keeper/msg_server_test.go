@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-    "loan/x/loan/types"
-    "loan/x/loan/keeper"
-    keepertest "loan/testutil/keeper"
+	keepertest "loan/testutil/keeper"
+	"loan/x/loan/keeper"
+	"loan/x/loan/types"
 )
 
 func setupMsgServer(t testing.TB) (types.MsgServer, context.Context) {

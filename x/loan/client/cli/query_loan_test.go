@@ -14,25 +14,25 @@ import (
 	"loan/testutil/network"
 	"loan/testutil/nullify"
 	"loan/x/loan/client/cli"
-    "loan/x/loan/types"
+	"loan/x/loan/types"
 )
 
 func networkWithLoanObjects(t *testing.T, n int) (*network.Network, []types.Loan) {
 	t.Helper()
 	cfg := network.DefaultConfig()
 	state := types.GenesisState{}
-    require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
+	require.NoError(t, cfg.Codec.UnmarshalJSON(cfg.GenesisState[types.ModuleName], &state))
 
 	for i := 0; i < n; i++ {
 		loan := types.Loan{
-    		Id: uint64(i),
-    	}
+			Id: uint64(i),
+		}
 		nullify.Fill(&loan)
 		state.LoanList = append(state.LoanList, loan)
 	}
 	buf, err := cfg.Codec.MarshalJSON(&state)
 	require.NoError(t, err)
-    cfg.GenesisState[types.ModuleName] = buf
+	cfg.GenesisState[types.ModuleName] = buf
 	return network.New(t, cfg), state.LoanList
 }
 
@@ -78,9 +78,9 @@ func TestShowLoan(t *testing.T) {
 				require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 				require.NotNil(t, resp.Loan)
 				require.Equal(t,
-                	nullify.Fill(&tc.obj),
-                	nullify.Fill(&resp.Loan),
-                )
+					nullify.Fill(&tc.obj),
+					nullify.Fill(&resp.Loan),
+				)
 			}
 		})
 	}
@@ -115,9 +115,9 @@ func TestListLoan(t *testing.T) {
 			require.NoError(t, net.Config.Codec.UnmarshalJSON(out.Bytes(), &resp))
 			require.LessOrEqual(t, len(resp.Loan), step)
 			require.Subset(t,
-            	nullify.Fill(objs),
-            	nullify.Fill(resp.Loan),
-            )
+				nullify.Fill(objs),
+				nullify.Fill(resp.Loan),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -132,8 +132,8 @@ func TestListLoan(t *testing.T) {
 			require.LessOrEqual(t, len(resp.Loan), step)
 			require.Subset(t,
 				nullify.Fill(objs),
-            	nullify.Fill(resp.Loan),
-            )
+				nullify.Fill(resp.Loan),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})

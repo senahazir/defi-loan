@@ -3,12 +3,12 @@ package keeper_test
 import (
 	"testing"
 
-    "loan/x/loan/keeper"
-    "loan/x/loan/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 	keepertest "loan/testutil/keeper"
 	"loan/testutil/nullify"
-	"github.com/stretchr/testify/require"
+	"loan/x/loan/keeper"
+	"loan/x/loan/types"
 )
 
 func createNLoan(keeper *keeper.Keeper, ctx sdk.Context, n int) []types.Loan {

@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"loan/x/loan/types"
-	"loan/testutil/nullify"
 	keepertest "loan/testutil/keeper"
+	"loan/testutil/nullify"
+	"loan/x/loan/types"
 )
 
 func TestLoanQuerySingle(t *testing.T) {
@@ -50,7 +50,7 @@ func TestLoanQuerySingle(t *testing.T) {
 			if tc.err != nil {
 				require.ErrorIs(t, err, tc.err)
 			} else {
-			    require.NoError(t, err)
+				require.NoError(t, err)
 				require.Equal(t,
 					nullify.Fill(tc.response),
 					nullify.Fill(response),
@@ -83,8 +83,8 @@ func TestLoanQueryPaginated(t *testing.T) {
 			require.LessOrEqual(t, len(resp.Loan), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-            	nullify.Fill(resp.Loan),
-            )
+				nullify.Fill(resp.Loan),
+			)
 		}
 	})
 	t.Run("ByKey", func(t *testing.T) {
@@ -96,8 +96,8 @@ func TestLoanQueryPaginated(t *testing.T) {
 			require.LessOrEqual(t, len(resp.Loan), step)
 			require.Subset(t,
 				nullify.Fill(msgs),
-            	nullify.Fill(resp.Loan),
-            )
+				nullify.Fill(resp.Loan),
+			)
 			next = resp.Pagination.NextKey
 		}
 	})

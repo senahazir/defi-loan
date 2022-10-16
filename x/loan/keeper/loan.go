@@ -3,14 +3,14 @@ package keeper
 import (
 	"encoding/binary"
 
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"loan/x/loan/types"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 )
 
 // GetLoanCount get the total number of loan
 func (k Keeper) GetLoanCount(ctx sdk.Context) uint64 {
-	store :=  prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
 	byteKey := types.KeyPrefix(types.LoanCountKey)
 	bz := store.Get(byteKey)
 
@@ -24,8 +24,8 @@ func (k Keeper) GetLoanCount(ctx sdk.Context) uint64 {
 }
 
 // SetLoanCount set the total number of loan
-func (k Keeper) SetLoanCount(ctx sdk.Context, count uint64)  {
-	store :=  prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
+func (k Keeper) SetLoanCount(ctx sdk.Context, count uint64) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), []byte{})
 	byteKey := types.KeyPrefix(types.LoanCountKey)
 	bz := make([]byte, 8)
 	binary.BigEndian.PutUint64(bz, count)
@@ -34,28 +34,28 @@ func (k Keeper) SetLoanCount(ctx sdk.Context, count uint64)  {
 
 // AppendLoan appends a loan in the store with a new id and update the count
 func (k Keeper) AppendLoan(
-    ctx sdk.Context,
-    loan types.Loan,
+	ctx sdk.Context,
+	loan types.Loan,
 ) uint64 {
 	// Create the loan
-    count := k.GetLoanCount(ctx)
+	count := k.GetLoanCount(ctx)
 
-    // Set the ID of the appended value
-    loan.Id = count
+	// Set the ID of the appended value
+	loan.Id = count
 
-    store :=  prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LoanKey))
-    appendedValue := k.cdc.MustMarshal(&loan)
-    store.Set(GetLoanIDBytes(loan.Id), appendedValue)
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LoanKey))
+	appendedValue := k.cdc.MustMarshal(&loan)
+	store.Set(GetLoanIDBytes(loan.Id), appendedValue)
 
-    // Update loan count
-    k.SetLoanCount(ctx, count+1)
+	// Update loan count
+	k.SetLoanCount(ctx, count+1)
 
-    return count
+	return count
 }
 
 // SetLoan set a specific loan in the store
 func (k Keeper) SetLoan(ctx sdk.Context, loan types.Loan) {
-	store :=  prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LoanKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LoanKey))
 	b := k.cdc.MustMarshal(&loan)
 	store.Set(GetLoanIDBytes(loan.Id), b)
 }
@@ -79,7 +79,7 @@ func (k Keeper) RemoveLoan(ctx sdk.Context, id uint64) {
 
 // GetAllLoan returns all loan
 func (k Keeper) GetAllLoan(ctx sdk.Context) (list []types.Loan) {
-    store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LoanKey))
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefix(types.LoanKey))
 	iterator := sdk.KVStorePrefixIterator(store, []byte{})
 
 	defer iterator.Close()
@@ -87,10 +87,10 @@ func (k Keeper) GetAllLoan(ctx sdk.Context) (list []types.Loan) {
 	for ; iterator.Valid(); iterator.Next() {
 		var val types.Loan
 		k.cdc.MustUnmarshal(iterator.Value(), &val)
-        list = append(list, val)
+		list = append(list, val)
 	}
 
-    return
+	return
 }
 
 // GetLoanIDBytes returns the byte representation of the ID
