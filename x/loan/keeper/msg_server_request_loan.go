@@ -11,7 +11,7 @@ import (
 func (k msgServer) RequestLoan(goCtx context.Context, msg *types.MsgRequestLoan) (*types.MsgRequestLoanResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Create a new Loan with the following user input
+	// TODO: Handling the message
 	var loan = types.Loan{
 		Amount:     msg.Amount,
 		Fee:        msg.Fee,
@@ -21,29 +21,22 @@ func (k msgServer) RequestLoan(goCtx context.Context, msg *types.MsgRequestLoan)
 		Borrower:   msg.Creator,
 	}
 
-	// TODO: collateral has to be more than the amount (+fee?)
-
-	// moduleAcc := sdk.AccAddress(crypto.AddressHash([]byte(types.ModuleName)))
-	// Get the borrower address
+	// Todo: check that collateral has to be more than the amount + fee
 	borrower, _ := sdk.AccAddressFromBech32(msg.Creator)
 
-	// Get the collateral as sdk.Coins
+	// get the collateral as sdk.Coins
 	collateral, err := sdk.ParseCoinsNormalized(loan.Collateral)
 	if err != nil {
 		panic(err)
 	}
 
-	// Use the module account as escrow account
+	// use the module account as escrow account
 	sdkError := k.bankKeeper.SendCoinsFromAccountToModule(ctx, borrower, types.ModuleName, collateral)
 	if sdkError != nil {
 		return nil, sdkError
 	}
 
-	// Add the loan to the keeper
-	k.AppendLoan(
-		ctx,
-		loan,
-	)
+	k.AppendLoan(ctx, loan)
 
 	return &types.MsgRequestLoanResponse{}, nil
 }
