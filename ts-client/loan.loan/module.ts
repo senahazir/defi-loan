@@ -7,15 +7,16 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgRequest } from "./types/loan/tx";
-import { MsgApproveLoan } from "./types/loan/tx";
 import { MsgRequestLoan } from "./types/loan/tx";
+import { MsgApproveLoan } from "./types/loan/tx";
+import { MsgRepayLoan } from "./types/loan/tx";
+import { MsgRequest } from "./types/loan/tx";
 
 
-export { MsgRequest, MsgApproveLoan, MsgRequestLoan };
+export { MsgRequestLoan, MsgApproveLoan, MsgRepayLoan, MsgRequest };
 
-type sendMsgRequestParams = {
-  value: MsgRequest,
+type sendMsgRequestLoanParams = {
+  value: MsgRequestLoan,
   fee?: StdFee,
   memo?: string
 };
@@ -26,23 +27,33 @@ type sendMsgApproveLoanParams = {
   memo?: string
 };
 
-type sendMsgRequestLoanParams = {
-  value: MsgRequestLoan,
+type sendMsgRepayLoanParams = {
+  value: MsgRepayLoan,
+  fee?: StdFee,
+  memo?: string
+};
+
+type sendMsgRequestParams = {
+  value: MsgRequest,
   fee?: StdFee,
   memo?: string
 };
 
 
-type msgRequestParams = {
-  value: MsgRequest,
+type msgRequestLoanParams = {
+  value: MsgRequestLoan,
 };
 
 type msgApproveLoanParams = {
   value: MsgApproveLoan,
 };
 
-type msgRequestLoanParams = {
-  value: MsgRequestLoan,
+type msgRepayLoanParams = {
+  value: MsgRepayLoan,
+};
+
+type msgRequestParams = {
+  value: MsgRequest,
 };
 
 
@@ -63,17 +74,17 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgRequest({ value, fee, memo }: sendMsgRequestParams): Promise<DeliverTxResponse> {
+		async sendMsgRequestLoan({ value, fee, memo }: sendMsgRequestLoanParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRequest: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRequestLoan: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRequest({ value: MsgRequest.fromPartial(value) })
+				let msg = this.msgRequestLoan({ value: MsgRequestLoan.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRequest: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRequestLoan: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
@@ -91,26 +102,40 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		async sendMsgRequestLoan({ value, fee, memo }: sendMsgRequestLoanParams): Promise<DeliverTxResponse> {
+		async sendMsgRepayLoan({ value, fee, memo }: sendMsgRepayLoanParams): Promise<DeliverTxResponse> {
 			if (!signer) {
-					throw new Error('TxClient:sendMsgRequestLoan: Unable to sign Tx. Signer is not present.')
+					throw new Error('TxClient:sendMsgRepayLoan: Unable to sign Tx. Signer is not present.')
 			}
 			try {			
 				const { address } = (await signer.getAccounts())[0]; 
 				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgRequestLoan({ value: MsgRequestLoan.fromPartial(value) })
+				let msg = this.msgRepayLoan({ value: MsgRepayLoan.fromPartial(value) })
 				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:sendMsgRequestLoan: Could not broadcast Tx: '+ e.message)
+				throw new Error('TxClient:sendMsgRepayLoan: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		async sendMsgRequest({ value, fee, memo }: sendMsgRequestParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgRequest: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgRequest({ value: MsgRequest.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgRequest: Could not broadcast Tx: '+ e.message)
 			}
 		},
 		
 		
-		msgRequest({ value }: msgRequestParams): EncodeObject {
+		msgRequestLoan({ value }: msgRequestLoanParams): EncodeObject {
 			try {
-				return { typeUrl: "/loan.loan.MsgRequest", value: MsgRequest.fromPartial( value ) }  
+				return { typeUrl: "/loan.loan.MsgRequestLoan", value: MsgRequestLoan.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRequest: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRequestLoan: Could not create message: ' + e.message)
 			}
 		},
 		
@@ -122,11 +147,19 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		msgRequestLoan({ value }: msgRequestLoanParams): EncodeObject {
+		msgRepayLoan({ value }: msgRepayLoanParams): EncodeObject {
 			try {
-				return { typeUrl: "/loan.loan.MsgRequestLoan", value: MsgRequestLoan.fromPartial( value ) }  
+				return { typeUrl: "/loan.loan.MsgRepayLoan", value: MsgRepayLoan.fromPartial( value ) }  
 			} catch (e: any) {
-				throw new Error('TxClient:MsgRequestLoan: Could not create message: ' + e.message)
+				throw new Error('TxClient:MsgRepayLoan: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgRequest({ value }: msgRequestParams): EncodeObject {
+			try {
+				return { typeUrl: "/loan.loan.MsgRequest", value: MsgRequest.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgRequest: Could not create message: ' + e.message)
 			}
 		},
 		
